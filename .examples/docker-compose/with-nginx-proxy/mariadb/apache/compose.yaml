@@ -48,9 +48,9 @@ services:
       - db
       - redis
       # - proxy
-    networks:
-      - proxy-tier
-      - default
+    # networks:
+    #   - proxy-tier
+    #   - default
 
   cron:
     # image: nextcloud:apache - replaced with the actual tag so I can control the image updates
