@@ -21,7 +21,7 @@ services:
   # https://hub.docker.com/_/redis
   redis:
     # image: redis:alpine - replaced with the actual tag so I can control the image updates
-    image: alpine3.22
+    image: redis:alpine3.22
     restart: always
 
   app:
