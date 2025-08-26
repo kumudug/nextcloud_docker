@@ -28,8 +28,8 @@ services:
     # image: nextcloud:apache - replaced with the actual tag so I can control the image updates
     image: nextcloud:31.0.8-apache
     restart: always
-    # ports:
-    #   - 80:80
+    ports:
+      - 80:80
     volumes:
       # - nextcloud:/var/www/html:z
       # NOTE: The `volumes` config of the `cron` and `app` containers must match
@@ -39,9 +39,9 @@ services:
       - ./nextcloud_config:/var/www/html/config:z
       - ./nextcloud_data:/var/www/html/data:z
     environment:
-      - VIRTUAL_HOST=nextcloud.kgune.com
-      - LETSENCRYPT_HOST=nextcloud.kgune.com
-      - LETSENCRYPT_EMAIL=kum.kgune@gmail.com
+      # - VIRTUAL_HOST=nextcloud.kgune.com
+      # - LETSENCRYPT_HOST=nextcloud.kgune.com
+      # - LETSENCRYPT_EMAIL=kum.kgune@gmail.com
       - MYSQL_HOST=db
       - REDIS_HOST=redis
     env_file:
@@ -49,10 +49,10 @@ services:
     depends_on:
       - db
       - redis
-      - proxy
-    networks:
-      - proxy-tier
-      - default
+      # - proxy
+    # networks:
+    #   - proxy-tier
+    #   - default
 
   cron:
     # image: nextcloud:apache - replaced with the actual tag so I can control the image updates
@@ -74,49 +74,49 @@ services:
   # Note: Nginx-proxy is an external service. You can find more information about the configuration here:
   # Warning: Do not use :latest tags of nginx-proxy unless absolutely sure about the consequences.
   # https://hub.docker.com/r/nginxproxy/nginx-proxy
-  proxy:
-    build: ./proxy
-    restart: always
-    ports:
-      - 80:80
-      - 443:443
-    labels:
-      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy"
-    volumes:
-      - certs:/etc/nginx/certs:ro,z
-      - vhost.d:/etc/nginx/vhost.d:z
-      - html:/usr/share/nginx/html:z
-      - dhparam:/etc/nginx/dhparam:z
-      - /var/run/docker.sock:/tmp/docker.sock:z,ro
-    networks:
-      - proxy-tier
+  # proxy:
+  #   build: ./proxy
+  #   restart: always
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   labels:
+  #     - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy"
+  #   volumes:
+  #     - certs:/etc/nginx/certs:ro,z
+  #     - vhost.d:/etc/nginx/vhost.d:z
+  #     - html:/usr/share/nginx/html:z
+  #     - dhparam:/etc/nginx/dhparam:z
+  #     - /var/run/docker.sock:/tmp/docker.sock:z,ro
+  #   networks:
+  #     - proxy-tier
 
   # Note: Letsencrypt companion is an external service. You can find more information about the configuration here:
   # https://hub.docker.com/r/nginxproxy/acme-companion
-  letsencrypt-companion:
-    image: nginxproxy/acme-companion
-    restart: always
-    environment:
-      - DEFAULT_EMAIL=
-    volumes:
-      - certs:/etc/nginx/certs:z
-      - acme:/etc/acme.sh:z
-      - vhost.d:/etc/nginx/vhost.d:z
-      - html:/usr/share/nginx/html:z
-      - /var/run/docker.sock:/var/run/docker.sock:z,ro
-    networks:
-      - proxy-tier
-    depends_on:
-      - proxy
+  # letsencrypt-companion:
+  #   image: nginxproxy/acme-companion
+  #   restart: always
+  #   environment:
+  #     - DEFAULT_EMAIL=
+  #   volumes:
+  #     - certs:/etc/nginx/certs:z
+  #     - acme:/etc/acme.sh:z
+  #     - vhost.d:/etc/nginx/vhost.d:z
+  #     - html:/usr/share/nginx/html:z
+  #     - /var/run/docker.sock:/var/run/docker.sock:z,ro
+  #   networks:
+  #     - proxy-tier
+  #   depends_on:
+  #     - proxy
 
-volumes:
-  # db: - used a bind mount instead
-  # nextcloud: - used a bind mount instead
-  certs:
-  acme:
-  vhost.d:
-  html:
-  dhparam:
+# volumes:
+#   # db: - used a bind mount instead
+#   # nextcloud: - used a bind mount instead
+#   certs:
+#   acme:
+#   vhost.d:
+#   html:
+#   dhparam:
 
-networks:
-  proxy-tier:
+# networks:
+#   proxy-tier:
